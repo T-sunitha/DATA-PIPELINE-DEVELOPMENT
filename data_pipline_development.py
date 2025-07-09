@@ -1,55 +1,56 @@
 import pandas as pd
-def extract_data(file_path):
-    df = pd.read_csv(file_path)
-    print(" Data extracted.")
-    return df
-pipeline/transform.py
-python
-Copy
-Edit
-def transform_data(df):
-    df_cleaned = df.dropna(subset=['age', 'salary'])  # Drop rows with missing age or salary
-    df_cleaned['age'] = df_cleaned['age'].astype(int)
-    df_cleaned['salary'] = df_cleaned['salary'].astype(float)
-    print(" Data transformed.")
-    return df_cleaned
-pipeline/load.py
-python
-Copy
-Edit
-import sqlite3
+import numpy as np
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
 
-def load_data(df, db_path="data/employees.db"):
-    conn = sqlite3.connect(db_path)
-    df.to_sql('employees', conn, if_exists='replace', index=False)
-    conn.close()
-    print("Data loaded into SQLite DB.")
-  run_pipeline.py
-python
-Copy
-Edit
-from pipeline.extract import extract_data
-from pipeline.transform import transform_data
-from pipeline.load import load_data
-def run():
-    print("Starting ETL pipeline...")
-    
-    # Step 1: Extract
-    df = extract_data('data/sample_data.csv')
-    
-    # Step 2: Transform
-    df_transformed = transform_data(df)
-    
-    # Step 3: Load
-    load_data(df_transformed)
-    
-    print("ETL pipeline completed.")
+# 1. Create Raw Data (simulating loaded CSV)
+data = {
+    'Name': ['Alice', 'Bob', 'Carol', 'David', 'Eva'],
+    'Age': [25, 63, np.nan, 45, 70],
+    'City': ['Delhi', 'Mumbai', 'Chennai', 'Kolkata', 'Bangalore'],
+    'Salary': [50000, 60000, 52000, np.nan, 80000]
+}
 
-if __name__ == "__main__":
-    run()
-How to Run
-From the terminal:
-bash
-Copy
-Edit
-python run_pipeline.py
+df = pd.DataFrame(data)
+print("🔹 Original Data:")
+print(df)
+
+# 2. Define Features
+numerical_features = ['Age', 'Salary']
+categorical_features = ['City']
+
+# 3. Preprocessing Pipelines
+numeric_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='mean')),
+    ('scaler', StandardScaler())
+])
+
+categorical_transformer = Pipeline(steps=[
+    ('encoder', OneHotEncoder(handle_unknown='ignore'))
+])
+
+# 4. Full Transformer
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', numeric_transformer, numerical_features),
+        ('cat', categorical_transformer, categorical_features)
+    ]
+)
+
+# 5. Apply Transformations
+processed_array = preprocessor.fit_transform(df)
+
+# 6. Combine Processed Data
+# Get transformed column names
+encoded_cat_cols = preprocessor.named_transformers_['cat']['encoder'].get_feature_names_out(categorical_features)
+all_columns = numerical_features + list(encoded_cat_cols)
+processed_df = pd.DataFrame(processed_array, columns=all_columns)
+
+print("\n Transformed Data:")
+print(processed_df)
+
+# 7. Save the processed data
+processed_df.to_csv("processed_data.csv", index=False)
+print("\n Processed data saved as 'processed_data.csv'")
