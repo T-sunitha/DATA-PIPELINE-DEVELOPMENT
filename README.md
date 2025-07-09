@@ -29,9 +29,9 @@ output, ensuring data quality, reproducibility, and scalability across environme
 
 ## Technologies Used
 
-Programming Languages: Python, SQL
-Libraries: pandas, numpy, scikit-learn, SQLAlchemy, requests, boto3
-Validation Tools: pandera, Great Expectations
-Storage: PostgreSQL, SQLite, MongoDB, Parquet
-Orchestration: Apache Airflow, Prefect
-Deployment (optional): Flask, FastAPI, Docker
+Data creation-	pandas
+Missing value handling-	SimpleImputer
+Feature scaling	-StandardScaler
+One-hot encoding	-OneHotEncoder
+Combined processing	-ColumnTransformer
+Pipelining	-Pipeline
