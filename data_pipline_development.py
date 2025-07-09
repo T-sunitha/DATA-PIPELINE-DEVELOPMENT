@@ -54,3 +54,31 @@ print(processed_df)
 # 7. Save the processed data
 processed_df.to_csv("processed_data.csv", index=False)
 print("\n Processed data saved as 'processed_data.csv'")
+
+output:
+
+🔹 Original Data:
+    Name   Age       City   Salary
+0  Alice  25.0      Delhi  50000.0
+1    Bob  63.0     Mumbai  60000.0
+2  Carol   NaN    Chennai  52000.0
+3  David  45.0    Kolkata      NaN
+4    Eva  70.0  Bangalore  80000.0
+
+ Transformed Data:
+        Age    Salary  City_Bangalore  City_Chennai  City_Delhi  City_Kolkata  \
+0 -1.650675 -0.989510             0.0           0.0         1.0           0.0   
+1  0.785273 -0.047120             0.0           0.0         0.0           0.0   
+2  0.000000 -0.801032             0.0           1.0         0.0           0.0   
+3 -0.368597  0.000000             0.0           0.0         0.0           1.0   
+4  1.234000  1.837661             1.0           0.0         0.0           0.0   
+
+   City_Mumbai  
+0          0.0  
+1          1.0  
+2          0.0  
+3          0.0  
+4          0.0  
+
+ Processed data saved as 'processed_data.csv'
+
